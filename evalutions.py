@@ -8,6 +8,7 @@ from pathlib import Path
 import sys
 import numpy as np
 import tensorflow as tf
+from sklearn.metrics import accuracy_score, roc_auc_score
 
 def load_arrays():
     d = Path("data")
@@ -27,29 +28,30 @@ def main():
     model = tf.keras.models.load_model(mpath)
 
     print("\nEvaluating on TRAIN set...")
-    train_results = model.evaluate(X_train, y_train, verbose=0)
-    print("TRAIN metrics:")
-    for name, val in zip(model.metrics_names, train_results):
-        print(f"  {name}: {val:.4f}")
+    y_prob_tr = model.predict(X_train, verbose=0).ravel()
+    y_pred_tr = (y_prob_tr >= 0.5).astype(int)
+    train_acc = accuracy_score(y_train, y_pred_tr)
+    try:
+        train_auc = roc_auc_score(y_train, y_prob_tr)
+    except Exception:
+        train_auc = float("nan")
+    print(f"TRAIN Accuracy: {train_acc:.4f}")
+    print(f"TRAIN AUC:      {train_auc:.4f}")
 
     print("\nEvaluating on TEST set...")
-    test_results = model.evaluate(X_test, y_test, verbose=0)
-    print("TEST metrics:")
-    for name, val in zip(model.metrics_names, test_results):
-        print(f"  {name}: {val:.4f}")
-
-    # Compare
-    names = model.metrics_names
-    def get(metric, res): return res[names.index(metric)] if metric in names else None
-    train_acc, test_acc = get("accuracy", train_results), get("accuracy", test_results)
-    train_auc, test_auc = get("auc", train_results), get("auc", test_results)
+    y_prob_te = model.predict(X_test, verbose=0).ravel()
+    y_pred_te = (y_prob_te >= 0.5).astype(int)
+    test_acc = accuracy_score(y_test, y_pred_te)
+    try:
+        test_auc = roc_auc_score(y_test, y_prob_te)
+    except Exception:
+        test_auc = float("nan")
+    print(f"TEST Accuracy:  {test_acc:.4f}")
+    print(f"TEST AUC:       {test_auc:.4f}")
 
     print("\n=== Comparison ===")
-    if train_acc is not None and test_acc is not None:
-        print(f"Accuracy: train={train_acc:.4f}, test={test_acc:.4f}, gap={train_acc - test_acc:+.4f}")
-    if train_auc is not None and test_auc is not None:
-        print(f"AUC:      train={train_auc:.4f}, test={test_auc:.4f}, gap={train_auc - test_auc:+.4f}")
-
+    print(f"Accuracy gap (train - test): {train_acc - test_acc:+.4f}")
+    print(f"AUC gap      (train - test): {train_auc - test_auc:+.4f}")
     # Simple heuristic note
     if (train_acc and test_acc and train_acc - test_acc > 0.05) or (train_auc and test_auc and train_auc - test_auc > 0.05):
         note = "Model likely overfitting (train >> test)."
