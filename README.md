@@ -1,4 +1,4 @@
-# IPO Listing Gains (India) — TensorFlow Classifier
+# IPO Listing Gains (India) -- TensorFlow Classifier
 
 Predict whether an Indian IPO lists **at a profit** using a dense neural network (TensorFlow/Keras).  
 End-to-end pipeline: **EDA → Viz → Cleaning/Outliers → Scaling → Split → Model → Evaluation**.
@@ -10,7 +10,7 @@ End-to-end pipeline: **EDA → Viz → Cleaning/Outliers → Scaling → Split �
 
 ## 👀 Highlights
 - **Target**: `Listing_Gains_Profit` (1 if listing gain > 0%)
-- **Model**: Dense MLP (1–4 hidden layers, ReLU; optional Dropout/BatchNorm, L2)
+- **Model**: Dense MLP (1-4 hidden layers, ReLU; optional Dropout/BatchNorm, L2)
 - **Results (latest run)**: Test Accuracy **…** · Test AUC **…**
 
 ## 📊 Plots
