@@ -118,8 +118,12 @@ def main():
     # Min–Max scale X to [0,1]
     scaler = MinMaxScaler(feature_range=(0.0, 1.0))
     X_scaled = scaler.fit_transform(X)
+    # Save scaler for inference
+    import joblib, pathlib
+    pathlib.Path("models").mkdir(parents=True, exist_ok=True)
+    joblib.dump(scaler, "models/scaler.pkl")
 
-    # Verify scaling via summary stats
+    # Verify scaling via summary ma
     scaled_df = pd.DataFrame(X_scaled, columns=PREDICTORS)
     stats = scaled_df.agg(["min", "max", "mean", "std"]).T
 
