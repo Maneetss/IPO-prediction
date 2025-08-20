@@ -6,4 +6,3 @@ This project expects a CSV at `data/Indian_IPO_Market_Data.csv` with the followi
 The pipeline creates a binary target `Listing_Gains_Profit` (1 if `Listing_Gains_Percent` > 0).
 
 > If you cannot share the full dataset publicly, do not commit it. Place it locally in `data/` following the name above. Large files should use Git LFS if versioned.
-
